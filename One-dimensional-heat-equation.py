@@ -9,13 +9,12 @@ import matplotlib as mt
 import time as ti
 from matplotlib import animation
 # mt.use('agg')
-length = 1 * 10
+length = 1
 d = 1
 time = 4
 dx = 0.02
 temperature_start = 10
 temperature = 0
-stop = 1
 class Canvas(FigureCanvasTkAgg):
     """
     Create a canvas for matplotlib pyplot under tkinter/PySimpleGUI canvas
@@ -52,9 +51,9 @@ def plot_figure(length,d,time,dx,temperature_start,temperature):
 
     k = 0.0
     while k <= time:
-
         ax.relim(visible_only=True)  # Пересчет границ осей
-        ax.autoscale_view(True)  # Автоматическое масштабирование осей
+        # ax.autoscale_view(True)  # Автоматическое масштабирование осей
+        ax.autoscale()
         canvas.draw()
         plt.pause(0.001)
         t, t_next = renew(n,p,t,t_next)
@@ -62,6 +61,7 @@ def plot_figure(length,d,time,dx,temperature_start,temperature):
         event, values = window.read(timeout=0)
         if event in (sg.WIN_CLOSED, 'Exit'):
             ax.cla()
+            plt.ioff()
             break
     plt.ioff()
     # plt.show()
@@ -69,12 +69,12 @@ sg.theme('DefaultNoMoreNagging')
 
 layout = [
     [sg.Canvas(size=(640, 480), key='Canvas')],
-    [sg.Text(text="length"),sg.Spin([i/10 for i in range(1,1000)], initial_value=length/10,enable_events=True, k='-L-'),
+    [sg.Text(text="length"),sg.Spin([i/10 for i in range(1,1000)], initial_value=length,enable_events=True, k='-L-'),
     sg.Text(text="d"),sg.Spin([i/10 for i in range(1,1000)], initial_value=d,enable_events=True, k='-D-'),
     sg.Text(text="time"),sg.Spin([i for i in range(1,70)], initial_value=time,enable_events=True, k='-T-'),
     sg.Text(text="dx"),sg.Spin([i/100 for i in range(1,1000)], initial_value=dx,enable_events=True, k='-DX-'),
-    sg.Text(text="temperature_start"),sg.Spin([i/10 for i in range(1,1000)], initial_value=temperature_start,enable_events=True, k='-TS-'),
-    sg.Text(text="temperature"),sg.Spin([i/10 for i in range(1,1000)], initial_value=temperature,enable_events=True, k='-TR-')],
+    sg.Text(text="temperature_start"),sg.Spin([i/10 for i in range(0,1000)], initial_value=temperature_start,enable_events=True, k='-TS-'),
+    sg.Text(text="temperature"),sg.Spin([i/10 for i in range(0,1000)], initial_value=temperature,enable_events=True, k='-TR-')],
     [sg.Button('Рассчитать')],
     # [sg.Text(text="α"),
     #  sg.Slider(range=(0, 90), default_value=a, size=(10, 20), expand_x=True, enable_events=True, orientation='h', key='Slider')],
@@ -99,7 +99,7 @@ canvas = Canvas(fig, window['Canvas'].Widget)
 # canvas = Canvas(fig, window['Canvas'].Widget)
 
 
-# plot_figure(length,d,time,dx,dt,temperature_start,temperature)
+plot_figure(length,d,time,dx,temperature_start,temperature)
 
 while True:
 
